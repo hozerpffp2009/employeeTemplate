@@ -1,0 +1,6 @@
+{
+    "node" : true,
+    "esversion" : 8,
+    "undef" : true,
+    "varstmt" : true
+}
