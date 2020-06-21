@@ -1,20 +1,19 @@
+const inquirer = require("inquirer");
+// const path = require("path");
+const fs = require("fs");
+// const render = require("./lib/htmlRenderer");
+// const OUTPUT_DIR = path.resolve(__dirname, "output");
+// const outputPath = path.join(OUTPUT_DIR, "team.html");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-const inquirer = require("inquirer");
-const path = require("path");
-const fs = require("fs");
 
-const OUTPUT_DIR = path.resolve(__dirname, "output");
-const outputPath = path.join(OUTPUT_DIR, "team.html");
-
-const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
 async function begin() {
-    console.log("Employee team")
+    console.log("Employee team");
     let myTeam = "";
     let myTeamSize;
     await inquirer.prompt({
@@ -61,7 +60,7 @@ async function begin() {
                     ]
                 }
             ])
-            .then((data) => {               
+            .then((data) => {
                 name = data.name;
                 id = data.id;
                 title = data.title;
@@ -75,50 +74,49 @@ async function begin() {
                         name: "officeNumber"
                     }])
                     .then((data) => {
-                        const empManager = new Manager(name, id, email, data.officeNumber);
+                        const manager = new Manager(name, id, email, data.officeNumber);
                         empMember = fs.readFileSync("templates/manager.html");
                         myTeam = myTeam + "\n" + eval('`' + empMember + '`');
                     });
-                    break;
-                    case "Intern":
-                        await inquirer.prompt([{
-                                type: "input",
-                                message: "What school are you currently enrolled in?",
-                                name: "school"
-                            }])
-                            .then((data) => {
-                                const empIntern = new Intern(name, id, email, data.school);
-                                empMember = fs.readFileSync("templates/intern.html");
-                                myTeam = myTeam + "\n" + eval('`' + empMember + '`');
-                            });
-                            break;
-                            case "Engineer":
-                        await inquirer.prompt([{
-                                type: "input",
-                                message: "What is your GitHub user id?",
-                                name: "GitHub"
-                            }])
-                            .then((data) => {
-                                const empEngineer = new Engineer(name, id, email, data.GitHub);
-                                empMember = fs.readFileSync("templates/engineer.html");
-                                myTeam = myTeam + "\n" + eval('`' + empMember + '`');
-                            });
-                            break;
-                        
-                }
+                break;
+            case "Engineer":
+                await inquirer.prompt([{
+                        type: "input",
+                        message: "What is your GitHub user id?",
+                        name: "GitHub"
+                    }])
+                    .then((data) => {
+                        const engineer = new Engineer(name, id, email, data.GitHub);
+                        empMember = fs.readFileSync("templates/engineer.html");
+                        myTeam = myTeam + "\n" + eval('`' + empMember + '`');
+                    });
+                break;
+            case "Intern":
+                await inquirer.prompt([{
+                        type: "input",
+                        message: "What school are you currently enrolled in?",
+                        name: "school"
+                    }])
+                    .then((data) => {
+                        const intern = new Intern(name, id, email, data.school);
+                        empMember = fs.readFileSync("templates/intern.html");
+                        myTeam = myTeam + "\n" + eval('`' + empMember + '`');
+                    });
+                break;
+        }
+    }
+
+    const myteam = fs.readFileSync("templates/main.html");
+    myTeam = eval('`' + myteam + '`');
+    fs.writeFile("output/team.html", myTeam, function (err) {
+        if (err) {
+            return console.log(err);
         }
 
-        const myteam = fs.readFileSync("templates/main.html");
-        myTeam = eval('`'+ mainHTML +'`');
-        fs.writeFile("output/team.html", myTeam, function(err) {
-            if (err) {
-                return console.log(err);
-              }
-            
-              console.log("Success!");
-            
-            
-        });
+        console.log("Success!");
+
+
+    });
 }
 begin();
 // After the user has input all employees desired, call the `render` function (required
